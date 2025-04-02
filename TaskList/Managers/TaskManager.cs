@@ -91,6 +91,27 @@ namespace TaskList.Managers
             }
         }
 
+        public void TasksByProject(string projName)
+        {
+            var projectTasks = tasks
+                .Where(task => task.Project.Equals(projName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (projectTasks.Count == 0)
+            {
+                Console.WriteLine("no tasks assigned to this project");
+                return;
+            }
+
+            Console.WriteLine("\n* this project includes *");
+            foreach (var task in projectTasks)
+            {
+                Console.Write($"==>  {task.Name}    ");
+                Console.WriteLine(task.LoveIt ? "and you love it!\n" : "it\'s just something to get over with\n");
+            }
+        }
+
+
         public void DisplayTasks()
         {
             if (tasks.Count == 0)
@@ -100,8 +121,6 @@ namespace TaskList.Managers
             }
 
             var groupedTasks = tasks.GroupBy(t => t.Workon.Date);
-
-            Console.WriteLine("\nhere is your to-do list:");
 
             foreach (var dayGroup in groupedTasks)
             {
@@ -116,7 +135,7 @@ namespace TaskList.Managers
                     Console.ForegroundColor = ConsoleColor.DarkCyan;
                     Console.WriteLine($"*** {task.Name} ***");
                     Console.ResetColor();
-                    Console.WriteLine($"project: {task.Project}, deadline: {task.Deadline:MM-dd}");
+                    Console.WriteLine($"part of your {task.Project} project, deadline: {task.Deadline:MM-dd}");
                     Console.Write(task.Done ? "done!" : "working on it..........");
                     Console.WriteLine(task.LoveIt ? "you love this!\n" : "just get it over with\n");
                     taskCount++;

@@ -76,8 +76,12 @@ namespace TaskList.Managers
             }
         }
 
+       
         public void DisplayProjects()
         {
+
+            TaskManager taskManager = new TaskManager();  // Create instance to access tasks
+
             if (projects.Count == 0)
             {
                 Console.WriteLine("\nyou have no projects going on");
@@ -86,9 +90,14 @@ namespace TaskList.Managers
 
             foreach (var project in projects)
             {
-                Console.WriteLine($"\nproject name: {project.Name}");
-                Console.WriteLine($"description: {project.Description}");
-                Console.WriteLine(project.Creative ? "creative project" : "not a particularily creative project");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine($"***** {project.Name} *****");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine($"you can think about it like this:\n'{project.Description}'");
+                Console.ResetColor();
+                Console.WriteLine(project.Creative ? "it\'s a creative project" : "it\'s not a particularily creative project");
+                taskManager.TasksByProject(project.Name);
             }
         }
     }

@@ -22,7 +22,6 @@ namespace TaskList.Models
             Project = project;
             Workon = workon;
             Deadline = deadline;
-
             Done = false;
             LoveIt = loveIt;
         }
