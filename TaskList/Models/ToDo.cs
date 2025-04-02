@@ -22,8 +22,9 @@ namespace TaskList.Models
             Project = project;
             Workon = workon;
             Deadline = deadline;
+
             Done = false;
-            loveIt = LoveIt;
+            LoveIt = loveIt;
         }
 
         // Task-specific methods

@@ -43,28 +43,24 @@ namespace TaskList.Managers
 
         public void AddProject()
         {
-            Console.Write("\nEnter the name of the project: ");
+            Console.Write("\nenter the name of the project: ");
             string name = Console.ReadLine();
             if (name.ToLower() == "q") return;
 
-            Console.Write("\nEnter a description of the project: ");
+            Console.Write("\nenter a description of the project: ");
             string description = Console.ReadLine();
-            Console.Write("\nEnter the start date of the project: ");
-            DateTime startDate = DateTime.Parse(Console.ReadLine());
-            Console.Write("\nEnter the end date of the project: ");
-            DateTime endDate = DateTime.Parse(Console.ReadLine());
-            Console.Write("\nIs it a creative project? (y/n): ");
+            Console.Write("\nis it a creative project? (y/n): ");
             bool creative = Console.ReadLine().ToLower() == "y";
 
-            Project project = new Project(name, description, startDate, endDate, creative);
+            Project project = new Project(name, description, creative);
             projects.Add(project);
             SaveProjects();  // Save projects to file after adding a new one
-            Console.WriteLine("\nProject added successfully!");
+            Console.WriteLine("\nproject added successfully!");
         }
 
         public void DeleteProject()
         {
-            Console.WriteLine("\nEnter the name of the project you want to delete: ");
+            Console.WriteLine("\nenter the name of the project you want to delete: ");
             string projectName = Console.ReadLine();
 
             var projectToDelete = projects.FirstOrDefault(p => p.Name.ToLower() == projectName.ToLower());
@@ -72,11 +68,11 @@ namespace TaskList.Managers
             {
                 projects.Remove(projectToDelete);
                 SaveProjects();  // Save projects to file after deletion
-                Console.WriteLine("\nProject deleted successfully!");
+                Console.WriteLine("\nproject deleted successfully!");
             }
             else
             {
-                Console.WriteLine("\nProject not found!");
+                Console.WriteLine("\nproject not found!");
             }
         }
 
@@ -84,17 +80,15 @@ namespace TaskList.Managers
         {
             if (projects.Count == 0)
             {
-                Console.WriteLine("\nThere are no projects.");
+                Console.WriteLine("\nyou have no projects going on");
                 return;
             }
 
             foreach (var project in projects)
             {
-                Console.WriteLine($"\nProject Name: {project.Name}");
-                Console.WriteLine($"Description: {project.Description}");
-                Console.WriteLine($"Start Date: {project.StartDate:yyyy-MM-dd}");
-                Console.WriteLine($"End Date: {project.EndDate:yyyy-MM-dd}");
-                Console.WriteLine(project.Creative ? "Creative Project" : "Non-Creative Project");
+                Console.WriteLine($"\nproject name: {project.Name}");
+                Console.WriteLine($"description: {project.Description}");
+                Console.WriteLine(project.Creative ? "creative project" : "not a particularily creative project");
             }
         }
     }

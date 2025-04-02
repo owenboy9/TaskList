@@ -37,11 +37,11 @@ namespace TaskList.Managers
 
         public void AddTask()
         {
-            Console.Write("\nEnter the task name: \nOr press 'q' to return to the main menu: ");
+            Console.Write("\nenter the task name or press 'q' to return to the main menu:   ");
             string name = Console.ReadLine();
             if (name.ToLower() == "q") return; // exit to main menu if user presses 'q'
 
-            Console.Write("\nWhich project does this task belong to? ");
+            Console.Write("\nwhich project does this task belong to? ");
             string projectName = Console.ReadLine();
 
             // Check if project exists (replace this with the actual project list or load it from ProjectManager)
@@ -49,7 +49,7 @@ namespace TaskList.Managers
 
             if (!projectExists)
             {
-                Console.WriteLine("\nThis project does not exist. Would you like to add it now? (y/n)");
+                Console.WriteLine("\nthis project does not exist. would you like to add it now? (y/n)");
                 if (Console.ReadLine().ToLower() == "y")
                 {
                     ProjectManager.Instance.AddProject(); // Add the project if user chooses 'y'
@@ -60,22 +60,22 @@ namespace TaskList.Managers
                 }
             }
 
-            Console.Write("\nWhen do you need to be done with it? ");
+            Console.Write("\nwhen do you need to be done with it? ");
             DateTime deadline = DateTime.Parse(Console.ReadLine());
-            Console.Write("\nWhen are you planning to work on it? ");
+            Console.Write("\nwhen are you planning to work on it? ");
             DateTime workon = DateTime.Parse(Console.ReadLine());
-            Console.Write("\nDo you love this task? (y/n) ");
-            bool loveIt = Console.ReadLine().ToLower() == "y";
+            Console.Write("\ndo you love this task? (y/n) ");
+            bool loveIt = Console.ReadLine().ToLower() == "y" ? true : false;
 
             ToDo task = new ToDo(name, projectName, workon, deadline, loveIt);
             tasks.Add(task);
             SaveTasks();  // Save tasks to file after adding a new one
-            Console.WriteLine("\nTask added successfully!");
+            Console.WriteLine("\ntask added successfully!");
         }
 
         public void DeleteTask()
         {
-            Console.WriteLine("\nEnter the name of the task you want to delete: ");
+            Console.WriteLine("\nenter the name of the task you want to delete: ");
             string taskName = Console.ReadLine();
 
             var taskToDelete = tasks.FirstOrDefault(t => t.Name.ToLower() == taskName.ToLower());
@@ -83,11 +83,11 @@ namespace TaskList.Managers
             {
                 tasks.Remove(taskToDelete);
                 SaveTasks();  // Save tasks to file after deletion
-                Console.WriteLine("\nTask deleted successfully!");
+                Console.WriteLine("\ntask deleted successfully!");
             }
             else
             {
-                Console.WriteLine("\nTask not found!");
+                Console.WriteLine("\ntask not found!");
             }
         }
 
@@ -95,28 +95,38 @@ namespace TaskList.Managers
         {
             if (tasks.Count == 0)
             {
-                Console.WriteLine("\nThere are no tasks in your list.");
+                Console.WriteLine("\nthere are no tasks in your list");
                 return;
             }
 
             var groupedTasks = tasks.GroupBy(t => t.Workon.Date);
 
-            Console.WriteLine("\nHere is your to-do list:");
+            Console.WriteLine("\nhere is your to-do list:");
 
             foreach (var dayGroup in groupedTasks)
             {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.WriteLine($"\n======> * {dayGroup.Key:yyyy-MM-dd} * <======\n");
+                Console.ResetColor();
+
                 int taskCount = 0;
 
                 foreach (var task in dayGroup)
                 {
-                    Console.WriteLine($"** {task.Name} ==> Project: {task.Project}, Deadline: {task.Deadline:yyyy-MM-dd}, Done: {task.Done}, Loved: {task.LoveIt}");
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.WriteLine($"*** {task.Name} ***");
+                    Console.ResetColor();
+                    Console.WriteLine($"project: {task.Project}, deadline: {task.Deadline:MM-dd}");
+                    Console.Write(task.Done ? "done!" : "working on it..........");
+                    Console.WriteLine(task.LoveIt ? "you love this!\n" : "just get it over with\n");
                     taskCount++;
 
                     if (taskCount % 2 == 0 && taskCount < dayGroup.Count())
                     {
                         string relaxationActivity = Relaxation.GetRandomRelaxationActivity();
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.WriteLine($"\n*** {relaxationActivity} ***\n");
+                        Console.ResetColor();
                     }
                 }
             }

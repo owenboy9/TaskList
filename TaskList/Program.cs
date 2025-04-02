@@ -13,7 +13,7 @@ namespace TaskList
     {
         // instantiate all the appropriate classes
         static ToDo task = new ToDo("task name", "project name", DateTime.Now, DateTime.Now.AddDays(1), false);
-        static Project project = new Project("project name", "project description", DateTime.Now, DateTime.Now.AddMonths(1), true);
+        static Project project = new Project("project name", "project description", true);
         static TaskManager taskManager = new TaskManager();
         static ProjectManager projectManager = ProjectManager.Instance;
 
