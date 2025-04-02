@@ -79,14 +79,13 @@ namespace TaskList.Managers
        
         public void DisplayProjects()
         {
-
-            TaskManager taskManager = new TaskManager();  // Create instance to access tasks
-
             if (projects.Count == 0)
             {
                 Console.WriteLine("\nyou have no projects going on");
                 return;
             }
+
+            TaskManager taskManager = new TaskManager();
 
             foreach (var project in projects)
             {
