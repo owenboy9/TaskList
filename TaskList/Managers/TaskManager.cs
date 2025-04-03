@@ -350,6 +350,7 @@ namespace TaskList.Managers
                 Console.ResetColor();
 
                 int taskCount = 0;
+                var options = new List<string>();
 
                 foreach (var task in dayGroup)
                 {
@@ -359,6 +360,7 @@ namespace TaskList.Managers
                     Console.WriteLine($"project: {task.Project}, deadline: {task.Deadline:MM-dd}");
                     Console.Write(task.Done ? "done!" : "working on it..........");
                     Console.WriteLine(task.LoveIt ? "you love this!\n" : "just get it over with\n");
+                    options.Add(task.Name.ToString());
                     taskCount++;
 
                     if (taskCount % 2 == 0 && taskCount < dayGroup.Count())
@@ -369,7 +371,48 @@ namespace TaskList.Managers
                         Console.ResetColor();
                     }
                 }
+
+                Menu(options.ToArray());
             }
+        }
+
+        public void Menu(string[] options)
+        {
+            int selectedIndex = 0;
+            ConsoleKey key;
+            do
+            {
+                Console.WriteLine("==> choose a task to modify <==");
+
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selectedIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine($"==> {options[i]} <==");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"   {options[i]}");
+                    }
+                }
+
+                key = Console.ReadKey(true).Key;
+
+                if (key == ConsoleKey.UpArrow)
+                    selectedIndex = (selectedIndex == 0) ? options.Length - 1 : selectedIndex - 1;
+                else if (key == ConsoleKey.DownArrow)
+                    selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
+            } while (key != ConsoleKey.Enter);
+
+            // HandleSelection(options[selectedIndex]);
+        }
+
+        static void HandleSelection(string selection)
+        {
+            Console.WriteLine($"\nYou selected: {selection}");
+
         }
     }
 }

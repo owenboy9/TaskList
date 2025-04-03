@@ -23,6 +23,7 @@ namespace TaskList
         static void ShowMenu()
         {
             string[] options = { "display tasks", "display projects", "add a new task", "add a new project", "exit" };
+
             int selectedIndex = 0;
             ConsoleKey key;
             do
