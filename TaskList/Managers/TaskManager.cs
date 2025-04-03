@@ -382,6 +382,7 @@ namespace TaskList.Managers
             ConsoleKey key;
             do
             {
+                Console.Clear();
                 Console.WriteLine("==> choose a task to modify <==");
 
                 for (int i = 0; i < options.Length; i++)
