@@ -100,6 +100,7 @@ namespace TaskList.Managers
 
         public void TasksByProject(string projName)
         {
+
             var projectTasks = tasks
                 .Where(task => task.Project.Equals(projName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
@@ -231,6 +232,7 @@ namespace TaskList.Managers
             Console.WriteLine("\n");
         }
 
+
         public void DisplayTasks()
         {
             if (tasks.Count == 0)
@@ -239,78 +241,38 @@ namespace TaskList.Managers
                 return;
             }
 
-            int selectedIndex = 0;
+            Console.Clear();
+            var groupedTasks = tasks.GroupBy(t => t.Workon.Date).OrderBy(g => g.Key);  // Ensure dates are in chronological order
 
-            ConsoleKey key = ConsoleKey.NoName;  // initialize key to avoid unassigned error
+            Console.WriteLine("\nhere is your to-do list:");
 
-            do
+            foreach (var dayGroup in groupedTasks)
             {
-                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine($"\n======> * {dayGroup.Key:yyyy-MM-dd} * <======\n");
+                Console.ResetColor();
 
-                var groupedTasks = tasks.GroupBy(t => t.Workon.Date);
+                int taskCount = 0;
 
-                foreach (var dayGroup in groupedTasks)
+                foreach (var task in dayGroup)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    Console.WriteLine($"\n======> * {dayGroup.Key:yyyy-MM-dd} * <======\n");
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.WriteLine($"*** {task.Name} ***");
                     Console.ResetColor();
+                    Console.WriteLine($"project: {task.Project}, deadline: {task.Deadline:MM-dd}");
+                    Console.Write(task.Done ? "done!" : "working on it..........");
+                    Console.WriteLine(task.LoveIt ? "you love this!\n" : "just get it over with\n");
+                    taskCount++;
 
-                    int taskCount = 0;
-
-                    foreach (var task in dayGroup)
+                    if (taskCount % 2 == 0 && taskCount < dayGroup.Count())
                     {
-                        // display task details 
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        Console.WriteLine($"*** {task.Name} ***");
+                        string relaxationActivity = Relaxation.GetRandomRelaxationActivity();
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine($"\n*** {relaxationActivity} ***\n");
                         Console.ResetColor();
-                        Console.WriteLine($"part of your {task.Project} project, deadline: {task.Deadline:MM-dd}");
-                        Console.Write(task.Done ? "done!" : "working on it..........");
-                        Console.WriteLine(task.LoveIt ? "you love this!\n" : "just get it over with\n");
-
-
-                        // highlight the selected task's menu
-                        bool isSelected = false;
-
-                        if (taskCount == selectedIndex)
-                        {
-                            DisplayTaskMenu(task, isSelected = true);
-                        }
-                        else
-                        {
-                            DisplayTaskMenu(task, isSelected = false);
-                        }
-
-                        taskCount++;
-
-                        /* skip relaxation activities when moving through tasks
-                        if (taskCount % 2 == 0 && taskCount < dayGroup.Count())
-                        {
-                            string relaxationActivity = Relaxation.GetRandomRelaxationActivity();
-                            Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine($"\n*** {relaxationActivity} ***\n");
-                            Console.ResetColor();
-                        }*/
                     }
                 }
-                
-                // handle user input anvigation
-                key = Console.ReadKey(true).Key;
-                if (key == ConsoleKey.UpArrow)
-                {
-                    selectedIndex = (selectedIndex == 0) ? tasks.Count - 1 : selectedIndex - 1;
-                        
-                }
-                else if (key == ConsoleKey.DownArrow)
-                {
-                    selectedIndex = (selectedIndex == tasks.Count - 1) ? 0 : selectedIndex + 1;
-                       
-                }
-                else if (key == ConsoleKey.Enter)
-                {
-                        HandleSelection(tasks[selectedIndex]);   // pass real task object for direct modification
-                }
-                
-            } while (key != ConsoleKey.Escape);
+            }
         }
     }
 }

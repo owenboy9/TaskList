@@ -27,6 +27,7 @@ namespace TaskList.Managers
         {
             string json = JsonConvert.SerializeObject(projects, Newtonsoft.Json.Formatting.Indented);
             File.WriteAllText(projectFilePath, json);
+
         }
 
         // Method to load projects from a JSON file
@@ -36,6 +37,7 @@ namespace TaskList.Managers
             {
                 string json = File.ReadAllText(projectFilePath);
                 projects = JsonConvert.DeserializeObject<List<Project>>(json) ?? new List<Project>();
+                Console.WriteLine($"loaded {projects.Count} projects"); // Debug line
             }
         }
 
@@ -79,6 +81,8 @@ namespace TaskList.Managers
        
         public void DisplayProjects()
         {
+            Console.Clear();
+
             if (projects.Count == 0)
             {
                 Console.WriteLine("\nyou have no projects going on");

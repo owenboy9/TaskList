@@ -69,15 +69,19 @@ namespace TaskList
                     taskManager.DisplayTasks(); // Call instance method
                     break;
                 case "display projects":
+
                     projectManager.DisplayProjects(); // Call instance method
                     break;
                 case "add a new task":
+
                     taskManager.AddTask(); // Call instance method
                     break;
                 case "add a new project":
+
                     projectManager.AddProject(); // Call instance method
                     break;
                 case "exit":
+
                     Console.WriteLine("goodbye!");
                     return;
             }
