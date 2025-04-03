@@ -382,7 +382,6 @@ namespace TaskList.Managers
             ConsoleKey key;
             do
             {
-                Console.Clear();
                 Console.WriteLine("==> choose a task to modify <==");
 
                 for (int i = 0; i < options.Length; i++)
@@ -407,13 +406,64 @@ namespace TaskList.Managers
                     selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
             } while (key != ConsoleKey.Enter);
 
-            // HandleSelection(options[selectedIndex]);
+            HandleSelection(options[selectedIndex]);
         }
 
         static void HandleSelection(string selection)
         {
-            Console.WriteLine($"\nYou selected: {selection}");
+            string taskName = selection;
+            string[] options = { "edit task", "delete task", "mark as done", "mark as not done", "change nothing" };
+            int selectedIndex = 0;
+            ConsoleKey key;
+            do
+            { 
+                Console.Clear();
+                Console.WriteLine($"\n===> * {taskName} * <===");
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selectedIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.Write($"  *{options[i]}*  ");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.Write($"   {options[i]}   ");
+                    }
+                }
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.LeftArrow)
+                    selectedIndex = (selectedIndex == 0) ? options.Length - 1 : selectedIndex - 1;
+                else if (key == ConsoleKey.RightArrow)
+                    selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
+            } while (key != ConsoleKey.Enter);
+        }
 
+        public void IndividualTaskEdi(string taskName, string selection)
+        {
+            switch (selection)
+            { 
+                case "edit task":
+                    EditTask(taskName);
+                    break;
+                case "delete task":
+                    DeleteTask(taskName);
+                    break;
+                case "mark as done":
+                    MarkAsDone(taskName);
+                    break;
+                case "mark as not done":
+                    MarkAsNotDone(taskName);
+                    break;
+                case "change nothing":
+                    Console.WriteLine("\nno changes made");
+                    break;
+            }
+            Console.WriteLine("\nPress any key to return to the main menu");
+            Console.ReadKey();
+            Console.Clear();
+            DisplayTasks();
         }
     }
 }
