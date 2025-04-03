@@ -101,6 +101,7 @@ namespace TaskList.Managers
         public void TasksByProject(string projName)
         {
 
+            Console.Clear();
             var projectTasks = tasks
                 .Where(task => task.Project.Equals(projName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
@@ -119,7 +120,7 @@ namespace TaskList.Managers
             }
         }
 
-        /*
+        
         public void IndividualMenu(ToDo task)
         {
             string[] options = {"edit task", "delete task", "mark as done", "mark as not done"};
@@ -155,7 +156,7 @@ namespace TaskList.Managers
 
             HandleSelection(options[selectedIndex], task);
         }
-        */
+        
 
         public void HandleSelection(ToDo task)
         {
@@ -242,7 +243,7 @@ namespace TaskList.Managers
             }
 
             Console.Clear();
-            var groupedTasks = tasks.GroupBy(t => t.Workon.Date).OrderBy(g => g.Key);  // Ensure dates are in chronological order
+            var groupedTasks = tasks.GroupBy(t => t.Workon.Date).OrderBy(g => g.Key);  // ensure dates are in chronological order
 
             Console.WriteLine("\nhere is your to-do list:");
 

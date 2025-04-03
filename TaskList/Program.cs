@@ -12,8 +12,6 @@ namespace TaskList
     class Program
     {
         // instantiate all the appropriate classes
-        static ToDo task = new ToDo("task name", "project name", DateTime.Now, DateTime.Now.AddDays(1), false);
-        static Project project = new Project("project name", "project description", true);
         static TaskManager taskManager = new TaskManager();
         static ProjectManager projectManager = ProjectManager.Instance;
 
@@ -27,7 +25,6 @@ namespace TaskList
             string[] options = { "display tasks", "display projects", "add a new task", "add a new project", "exit" };
             int selectedIndex = 0;
             ConsoleKey key;
-
             do
             {
                 Console.Clear();
@@ -66,22 +63,23 @@ namespace TaskList
             switch (selection)
             {
                 case "display tasks":
+                    Console.Clear();
                     taskManager.DisplayTasks(); // Call instance method
+                    Console.Clear();
                     break;
                 case "display projects":
-
+                    Console.Clear();
                     projectManager.DisplayProjects(); // Call instance method
                     break;
                 case "add a new task":
-
+                    Console.Clear();
                     taskManager.AddTask(); // Call instance method
                     break;
                 case "add a new project":
-
+                    Console.Clear();
                     projectManager.AddProject(); // Call instance method
                     break;
                 case "exit":
-
                     Console.WriteLine("goodbye!");
                     return;
             }
