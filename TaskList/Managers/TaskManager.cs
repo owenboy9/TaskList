@@ -359,8 +359,8 @@ namespace TaskList.Managers
                     Console.WriteLine($"*** {task.Name} ***");
                     Console.ResetColor();
                     Console.WriteLine($"project: {task.Project}, deadline: {task.Deadline:MM-dd}");
-                    Console.Write(task.Done ? "done!" : "working on it..........");
-                    Console.WriteLine(task.LoveIt ? "you love this!\n" : "just get it over with\n");
+                    Console.Write(task.Done ? "done!.........." : "working on it..........");
+                    Console.WriteLine(task.LoveIt ? "such a great thing to do!\n" : "just one of those things you sorta gotta get outta your way\n");
                     options.Add(task.Name.ToString());
                     taskCount++;
 
@@ -380,9 +380,13 @@ namespace TaskList.Managers
         {
             int selectedIndex = 0;
             ConsoleKey key;
+
+            Console.CursorVisible = false; // hide the cursor
+
             do
             {
-                Console.WriteLine("==> choose a task to modify <==");
+                Console.SetCursorPosition(0, Console.CursorTop - options.Length - 1); // move cursor up to top of the menu
+                Console.WriteLine("==> choose a task to modify or press ESC to skip <==");
 
                 for (int i = 0; i < options.Length; i++)
                 {
@@ -404,6 +408,9 @@ namespace TaskList.Managers
                     selectedIndex = (selectedIndex == 0) ? options.Length - 1 : selectedIndex - 1;
                 else if (key == ConsoleKey.DownArrow)
                     selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
+                else if (key == ConsoleKey.Escape)
+                    return; // exit menu if user presses 'escape'
+
             } while (key != ConsoleKey.Enter);
 
             HandleSelection(options[selectedIndex]);
