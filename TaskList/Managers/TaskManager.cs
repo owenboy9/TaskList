@@ -98,6 +98,27 @@ namespace TaskList.Managers
             Console.WriteLine("some method here");
         }
 
+        public void TasksByProject(string projName)
+        {
+            var projectTasks = tasks
+                .Where(task => task.Project.Equals(projName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (projectTasks.Count == 0)
+            {
+                Console.WriteLine("no tasks assigned to this project");
+                return;
+            }
+
+            Console.WriteLine("\n* this project includes *");
+            foreach (var task in projectTasks)
+            {
+                Console.Write($"==>  {task.Name}    ");
+                Console.WriteLine(task.LoveIt ? "and you love it!\n" : "it\'s just something to get over with\n");
+            }
+        }
+
+        /*
         public void IndividualMenu(ToDo task)
         {
             string[] options = {"edit task", "delete task", "mark as done", "mark as not done"};
@@ -133,48 +154,82 @@ namespace TaskList.Managers
 
             HandleSelection(options[selectedIndex], task);
         }
+        */
 
-        public void HandleSelection(string selection, ToDo task)
+        public void HandleSelection(ToDo task)
         {
-            switch (selection)
+            string[] options = { "edit task", "delete task", "mark as done", "mark as not done" };
+            int selectedIndex = 0;
+            ConsoleKey key;
+
+            do
             {
-                case "edit task":
-                    EditTask();
-                    break;
-                case "delete task":
-                    DeleteTask();
-                    break;
-                case "mark as done":
-                    task.MarkAsDone();
-                    SaveTasks();  // save tasks to file after marking as done
-                    break;
-                case "mark as not done":
-                    task.MarkAsNotDone();
-                    SaveTasks();  // save tasks to file after marking as not done
-                    break;
-            }
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selectedIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.Write($" * {options[i]} * ");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.Write($"   {options[i]}   ");
+                    }
+                }
+
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.LeftArrow)
+                    selectedIndex = (selectedIndex == 0) ? options.Length - 1 : selectedIndex - 1;
+                else if (key == ConsoleKey.RightArrow)
+                    selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
+
+                // apply changes directly to the task and refresh immediately
+                if (key == ConsoleKey.Enter)
+                {
+                    switch (options[selectedIndex])
+                    {
+                        case "edit task":
+                            EditTask();
+                            break;
+                        case "delete task":
+                            tasks.Remove(task);
+                            SaveTasks();
+                            return; // exit menu since task was deleted
+                        case "mark as done":
+                            task.MarkAsDone();
+                            SaveTasks();
+                            break;
+                        case "mark as not done":
+                            task.MarkAsNotDone();
+                            SaveTasks();
+                            break;
+                    }
+                }
+
+            } while (key != ConsoleKey.Escape);
         }
 
-        public void TasksByProject(string projName)
+        private void DisplayTaskMenu(ToDo task, bool isSelected)
         {
-            var projectTasks = tasks
-                .Where(task => task.Project.Equals(projName, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            string[] options = { "edit task", "delete task", "mark as done", "mark as not done" };
 
-            if (projectTasks.Count == 0)
+            foreach (var option in options)
             {
-                Console.WriteLine("no tasks assigned to this project");
-                return;
-            }
+                if (isSelected)
+                {
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
 
-            Console.WriteLine("\n* this project includes *");
-            foreach (var task in projectTasks)
-            {
-                Console.Write($"==>  {task.Name}    ");
-                Console.WriteLine(task.LoveIt ? "and you love it!\n" : "it\'s just something to get over with\n");
+                Console.Write($"  {option}  ");
+                Console.ResetColor();
             }
+            Console.WriteLine("\n");
         }
-
 
         public void DisplayTasks()
         {
@@ -186,7 +241,7 @@ namespace TaskList.Managers
 
             int selectedIndex = 0;
 
-            ConsoleKey key;
+            ConsoleKey key = ConsoleKey.NoName;  // initialize key to avoid unassigned error
 
             do
             {
@@ -201,50 +256,61 @@ namespace TaskList.Managers
                     Console.ResetColor();
 
                     int taskCount = 0;
-                    int taskIndex = 0;
 
                     foreach (var task in dayGroup)
                     {
-                        if (taskIndex == selectedIndex)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Magenta;
-                            Console.ResetColor();
-                        }
-
+                        // display task details 
                         Console.ForegroundColor = ConsoleColor.DarkCyan;
                         Console.WriteLine($"*** {task.Name} ***");
                         Console.ResetColor();
                         Console.WriteLine($"part of your {task.Project} project, deadline: {task.Deadline:MM-dd}");
                         Console.Write(task.Done ? "done!" : "working on it..........");
                         Console.WriteLine(task.LoveIt ? "you love this!\n" : "just get it over with\n");
-                        taskCount++;
-                        taskIndex++;
 
+
+                        // highlight the selected task's menu
+                        bool isSelected = false;
+
+                        if (taskCount == selectedIndex)
+                        {
+                            DisplayTaskMenu(task, isSelected = true);
+                        }
+                        else
+                        {
+                            DisplayTaskMenu(task, isSelected = false);
+                        }
+
+                        taskCount++;
+
+                        /* skip relaxation activities when moving through tasks
                         if (taskCount % 2 == 0 && taskCount < dayGroup.Count())
                         {
                             string relaxationActivity = Relaxation.GetRandomRelaxationActivity();
                             Console.ForegroundColor = ConsoleColor.Cyan;
                             Console.WriteLine($"\n*** {relaxationActivity} ***\n");
                             Console.ResetColor();
-                        }
+                        }*/
                     }
                 }
+                
+                // handle user input anvigation
                 key = Console.ReadKey(true).Key;
                 if (key == ConsoleKey.UpArrow)
                 {
                     selectedIndex = (selectedIndex == 0) ? tasks.Count - 1 : selectedIndex - 1;
+                        
                 }
                 else if (key == ConsoleKey.DownArrow)
                 {
                     selectedIndex = (selectedIndex == tasks.Count - 1) ? 0 : selectedIndex + 1;
+                       
                 }
                 else if (key == ConsoleKey.Enter)
                 {
-                    IndividualMenu(tasks[selectedIndex]);
+                        HandleSelection(tasks[selectedIndex]);   // pass real task object for direct modification
                 }
                 
             } while (key != ConsoleKey.Escape);
-
         }
     }
 }
