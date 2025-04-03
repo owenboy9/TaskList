@@ -382,10 +382,11 @@ namespace TaskList.Managers
             ConsoleKey key;
 
             Console.CursorVisible = false; // hide the cursor
+            int menuStartLine = Console.CursorTop; // store the position where the menu starts
 
             do
             {
-                Console.SetCursorPosition(0, Console.CursorTop - options.Length - 1); // move cursor up to top of the menu
+                Console.SetCursorPosition(0, menuStartLine); // move cursor up to top of the menu
                 Console.WriteLine("==> choose a task to modify or press ESC to skip <==");
 
                 for (int i = 0; i < options.Length; i++)
