@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
@@ -75,10 +76,8 @@ namespace TaskList.Managers
             Console.WriteLine("\ntask added successfully!");
         }
 
-        public void DeleteTask()
+        public void DeleteTask(string taskName)
         {
-            Console.WriteLine("\nenter the name of the task you want to delete: ");
-            string taskName = Console.ReadLine();
 
             var taskToDelete = tasks.FirstOrDefault(t => t.Name.ToLower() == taskName.ToLower());
             if (taskToDelete != null)
@@ -93,15 +92,112 @@ namespace TaskList.Managers
             }
         }
 
-        public void EditTask()
+        public void EditTask(string taskName)
         {
-            Console.WriteLine("some method here");
+            var taskToEdit = tasks.FirstOrDefault(t => t.Name.ToLower() == taskName.ToLower());
+
+            if (taskToEdit == null)
+            {
+                Console.WriteLine("\ntask not found!");
+                return;
+            }
+
+            Console.WriteLine("\nyou can always press 'q' to return to the main menu");
+
+            // Edit task name
+            Console.Write("\nchange task name (press enter to keep current): ");
+            string name = Console.ReadLine();
+            if (name.ToLower() == "q") return;
+            if (!string.IsNullOrWhiteSpace(name)) taskToEdit.Name = name;
+
+            // Edit project
+            Console.Write("\nmove to another project (press enter to keep current): ");
+            string projectName = Console.ReadLine();
+            if (projectName.ToLower() == "q") return;
+            if (!string.IsNullOrWhiteSpace(projectName))
+            {
+                var projectExists = ProjectManager.Instance.GetProjects()
+                    .Any(p => p.Name.ToLower() == projectName.ToLower());
+
+                if (!projectExists)
+                {
+                    Console.WriteLine("\nthis project does not exist. would you like to add it now? (y/n)");
+                    if (Console.ReadLine().ToLower() == "y")
+                    {
+                        ProjectManager.Instance.AddProject();
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                taskToEdit.Project = projectName;
+            }
+
+            // Edit deadline
+            Console.Write("\nchange deadline (press enter to keep current): ");
+            string deadlineInput = Console.ReadLine();
+            if (deadlineInput.ToLower() == "q") return;
+            if (!string.IsNullOrWhiteSpace(deadlineInput) && DateTime.TryParse(deadlineInput, out DateTime newDeadline))
+            {
+                taskToEdit.Deadline = newDeadline;
+            }
+
+            // Edit workon date
+            Console.Write("\nany new plans for working on it? (press enter to keep current): ");
+            string workonInput = Console.ReadLine();
+            if (workonInput.ToLower() == "q") return;
+            if (!string.IsNullOrWhiteSpace(workonInput) && DateTime.TryParse(workonInput, out DateTime newWorkon))
+            {
+                taskToEdit.Workon = newWorkon;
+            }
+
+            // Edit "LoveIt" status
+            Console.Write("\ndo you love this task? (y/n, press enter to keep current): ");
+            string loveItInput = Console.ReadLine();
+            if (loveItInput.ToLower() == "q") return;
+            if (!string.IsNullOrWhiteSpace(loveItInput))
+            {
+                taskToEdit.LoveIt = loveItInput.ToLower() == "y";
+            }
+
+            // Save changes
+            SaveTasks();
+            Console.WriteLine("\ntask updated successfully!");
+        }
+
+        public void MarkAsDone(string taskName)
+        {
+            var taskToMark = tasks.FirstOrDefault(t => t.Name.ToLower() == taskName.ToLower());
+            if (taskToMark != null)
+            {
+                taskToMark.Done = true;
+                SaveTasks();  // save tasks to file after marking as done
+                Console.WriteLine("\ntask marked as done!");
+            }
+            else
+            {
+                Console.WriteLine("\ntask not found!");
+            }
+        }
+
+        public void MarkAsNotDone(string taskName)
+        {
+            var taskToMark = tasks.FirstOrDefault(t => t.Name.ToLower() == taskName.ToLower());
+            if (taskToMark != null)
+            {
+                taskToMark.Done = false;
+                SaveTasks();  // save tasks to file after marking as done
+                Console.WriteLine("\ntask marked as done!");
+            }
+            else
+            {
+                Console.WriteLine("\ntask not found!");
+            }
         }
 
         public void TasksByProject(string projName)
         {
-
-            Console.Clear();
             var projectTasks = tasks
                 .Where(task => task.Project.Equals(projName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
@@ -112,15 +208,15 @@ namespace TaskList.Managers
                 return;
             }
 
-            Console.WriteLine("\n* this project includes *");
+            Console.WriteLine("\n* this project includes:");
             foreach (var task in projectTasks)
             {
-                Console.Write($"==>  {task.Name}    ");
-                Console.WriteLine(task.LoveIt ? "and you love it!\n" : "it\'s just something to get over with\n");
+                Console.Write($"==>  {task.Name}        ");
+                Console.WriteLine(task.LoveIt ? "and you love it!" : "it\'s just something to get over with");
             }
         }
 
-        
+        /*
         public void IndividualMenu(ToDo task)
         {
             string[] options = {"edit task", "delete task", "mark as done", "mark as not done"};
@@ -232,7 +328,7 @@ namespace TaskList.Managers
             }
             Console.WriteLine("\n");
         }
-
+        */
 
         public void DisplayTasks()
         {
@@ -267,9 +363,9 @@ namespace TaskList.Managers
 
                     if (taskCount % 2 == 0 && taskCount < dayGroup.Count())
                     {
-                        string relaxationActivity = Relaxation.GetRandomRelaxationActivity();
+                        string relaxationActivity = Relaxation.GetRandomRelaxationActivity().ToUpper();
                         Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.WriteLine($"\n*** {relaxationActivity} ***\n");
+                        Console.WriteLine($"*** {relaxationActivity} ***\n");
                         Console.ResetColor();
                     }
                 }

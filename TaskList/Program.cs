@@ -65,7 +65,6 @@ namespace TaskList
                 case "display tasks":
                     Console.Clear();
                     taskManager.DisplayTasks(); // Call instance method
-                    Console.Clear();
                     break;
                 case "display projects":
                     Console.Clear();

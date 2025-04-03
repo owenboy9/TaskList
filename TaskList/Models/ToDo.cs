@@ -26,9 +26,5 @@ namespace TaskList.Models
             LoveIt = loveIt;
         }
 
-        // Task-specific methods
-        public void MarkAsDone() => Done = true;
-        public void MarkAsNotDone() => Done = false;
-
     }
 }
