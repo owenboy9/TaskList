@@ -342,6 +342,7 @@ namespace TaskList.Managers
             var groupedTasks = tasks.GroupBy(t => t.Workon.Date).OrderBy(g => g.Key);  // ensure dates are in chronological order
 
             Console.WriteLine("\nhere is your to-do list:");
+            var options = new List<string>();
 
             foreach (var dayGroup in groupedTasks)
             {
@@ -350,7 +351,7 @@ namespace TaskList.Managers
                 Console.ResetColor();
 
                 int taskCount = 0;
-                var options = new List<string>();
+                
 
                 foreach (var task in dayGroup)
                 {
@@ -371,9 +372,8 @@ namespace TaskList.Managers
                         Console.ResetColor();
                     }
                 }
-
-                Menu(options.ToArray());
             }
+            Menu(options.ToArray());
         }
 
         public void Menu(string[] options)
