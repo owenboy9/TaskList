@@ -381,28 +381,29 @@ namespace TaskList.Managers
             int selectedIndex = 0;
             ConsoleKey key;
 
-            Console.CursorVisible = false; // hide the cursor
-            int menuStartLine = Console.CursorTop; // store the position where the menu starts
+            Console.CursorVisible = false; // Hide cursor for a clean UI
+
+            // Print the static menu header
+            Console.WriteLine("\n==> choose a task to modify or press ESC to skip <==");
+
+            // Remember where the menu selection should appear
+            int menuLine = Console.CursorTop;
 
             do
             {
-                Console.SetCursorPosition(0, menuStartLine); // move cursor up to top of the menu
-                Console.WriteLine("==> choose a task to modify or press ESC to skip <==");
+                // Move cursor to the menu position
+                Console.SetCursorPosition(0, menuLine);
 
-                for (int i = 0; i < options.Length; i++)
-                {
-                    if (i == selectedIndex)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.WriteLine($"==> {options[i]} <==");
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.WriteLine($"   {options[i]}");
-                    }
-                }
+                // Clear previous text before printing the new selection
+                Console.Write(new string(' ', Console.WindowWidth)); // Overwrite previous option
+                Console.SetCursorPosition(0, menuLine); // Reset cursor to the start of line
 
+                // Print highlighted option
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"=> {options[selectedIndex]} <=");
+                Console.ResetColor();
+
+                // Read user input
                 key = Console.ReadKey(true).Key;
 
                 if (key == ConsoleKey.UpArrow)
@@ -410,12 +411,15 @@ namespace TaskList.Managers
                 else if (key == ConsoleKey.DownArrow)
                     selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
                 else if (key == ConsoleKey.Escape)
-                    return; // exit menu if user presses 'escape'
+                    return; // Exit menu if user presses 'Escape'
 
             } while (key != ConsoleKey.Enter);
 
             HandleSelection(options[selectedIndex]);
         }
+
+
+
 
         public void HandleSelection(string selection)
         {
