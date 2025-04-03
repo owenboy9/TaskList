@@ -84,7 +84,7 @@ namespace TaskList
                     return;
             }
 
-            Console.WriteLine("\nPress any key to return to the main menu");
+            Console.WriteLine("\npress any key to return to the main menu");
             Console.ReadKey();
             ShowMenu();
         }

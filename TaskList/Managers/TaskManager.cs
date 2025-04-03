@@ -409,7 +409,7 @@ namespace TaskList.Managers
             HandleSelection(options[selectedIndex]);
         }
 
-        static void HandleSelection(string selection)
+        public void HandleSelection(string selection)
         {
             string taskName = selection;
             string[] options = { "edit task", "delete task", "mark as done", "mark as not done", "change nothing" };
@@ -438,9 +438,11 @@ namespace TaskList.Managers
                 else if (key == ConsoleKey.RightArrow)
                     selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
             } while (key != ConsoleKey.Enter);
+
+            IndividualTaskEdit(taskName, options[selectedIndex]);
         }
 
-        public void IndividualTaskEdi(string taskName, string selection)
+        public void IndividualTaskEdit(string taskName, string selection)
         {
             switch (selection)
             { 
@@ -458,11 +460,10 @@ namespace TaskList.Managers
                     break;
                 case "change nothing":
                     Console.WriteLine("\nno changes made");
-                    break;
+                    return;
             }
-            Console.WriteLine("\nPress any key to return to the main menu");
+            Console.WriteLine("\npress any key to return to the main menu");
             Console.ReadKey();
-            Console.Clear();
             DisplayTasks();
         }
     }
