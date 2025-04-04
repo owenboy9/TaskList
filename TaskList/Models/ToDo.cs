@@ -16,11 +16,11 @@ namespace TaskList.Models
         public bool LoveIt { get; set; }
 
         // constructor
-        public ToDo(string name, string? project, DateTime workon, DateTime? deadline, bool loveIt)
+        public ToDo(string name, bool loveIt, string? project = null, DateTime? deadline = null, DateTime? workon = null)
         {
             Name = name;
             Project = project;
-            Workon = workon;
+            Workon = workon ?? DateTime.Today; // default to today if null
             Deadline = deadline;
             Done = false;
             LoveIt = loveIt;

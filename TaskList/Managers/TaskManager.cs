@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace TaskList.Managers
             Console.Write("\ndo you love this task? (y/n) ");
             bool loveIt = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            ToDo task = new ToDo(name, projectName, workon, deadline, loveIt);
+            ToDo task = new ToDo(name, loveIt, projectName, workon, deadline);
             tasks.Add(task);
             SaveTasks();  // Save tasks to file after adding a new one
             Console.WriteLine("\ntask added successfully!");
@@ -90,6 +91,7 @@ namespace TaskList.Managers
             {
                 Console.WriteLine("\ntask not found!");
             }
+            DisplayTasks();
         }
 
         public void EditTask(string taskName)
@@ -164,6 +166,8 @@ namespace TaskList.Managers
             // Save changes
             SaveTasks();
             Console.WriteLine("\ntask updated successfully!");
+
+            DisplayTasks();
         }
 
         public void MarkAsDone(string taskName)
@@ -179,6 +183,7 @@ namespace TaskList.Managers
             {
                 Console.WriteLine("\ntask not found!");
             }
+            DisplayTasks();
         }
 
         public void MarkAsNotDone(string taskName)
@@ -194,6 +199,7 @@ namespace TaskList.Managers
             {
                 Console.WriteLine("\ntask not found!");
             }
+            DisplayTasks();
         }
 
         public void TasksByProject(string projName)
@@ -204,7 +210,7 @@ namespace TaskList.Managers
 
             if (projectTasks.Count == 0)
             {
-                Console.WriteLine("no tasks assigned to this project");
+                Console.WriteLine("* no tasks assigned to this project");
                 return;
             }
 
@@ -216,132 +222,28 @@ namespace TaskList.Managers
             }
         }
 
-        /*
-        public void IndividualMenu(ToDo task)
-        {
-            string[] options = {"edit task", "delete task", "mark as done", "mark as not done"};
-            int selectedIndex = 0;
-            ConsoleKey key;
-
-            do
-            {
-                Console.Clear();
-
-                Console.WriteLine($"\n===> * {task.Name} * <===");
-
-                for (int i = 0; i < options.Length; i++)
-                {
-                    if (i == selectedIndex)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.Write($" * {options[i]} * ");
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.Write($"   {options[i]}   ");
-                    }
-                }
-                key = Console.ReadKey(true).Key;
-
-                if (key == ConsoleKey.LeftArrow)
-                    selectedIndex = (selectedIndex == 0) ? options.Length - 1 : selectedIndex - 1;
-                else if (key == ConsoleKey.RightArrow)
-                    selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
-            } while (key != ConsoleKey.Enter);
-
-            HandleSelection(options[selectedIndex], task);
-        }
-        
-
-        public void HandleSelection(ToDo task)
-        {
-            string[] options = { "edit task", "delete task", "mark as done", "mark as not done" };
-            int selectedIndex = 0;
-            ConsoleKey key;
-
-            do
-            {
-                for (int i = 0; i < options.Length; i++)
-                {
-                    if (i == selectedIndex)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.Write($" * {options[i]} * ");
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.Write($"   {options[i]}   ");
-                    }
-                }
-
-                key = Console.ReadKey(true).Key;
-                if (key == ConsoleKey.LeftArrow)
-                    selectedIndex = (selectedIndex == 0) ? options.Length - 1 : selectedIndex - 1;
-                else if (key == ConsoleKey.RightArrow)
-                    selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
-
-                // apply changes directly to the task and refresh immediately
-                if (key == ConsoleKey.Enter)
-                {
-                    switch (options[selectedIndex])
-                    {
-                        case "edit task":
-                            EditTask();
-                            break;
-                        case "delete task":
-                            tasks.Remove(task);
-                            SaveTasks();
-                            return; // exit menu since task was deleted
-                        case "mark as done":
-                            task.MarkAsDone();
-                            SaveTasks();
-                            break;
-                        case "mark as not done":
-                            task.MarkAsNotDone();
-                            SaveTasks();
-                            break;
-                    }
-                }
-
-            } while (key != ConsoleKey.Escape);
-        }
-
-        private void DisplayTaskMenu(ToDo task, bool isSelected)
-        {
-            string[] options = { "edit task", "delete task", "mark as done", "mark as not done" };
-
-            foreach (var option in options)
-            {
-                if (isSelected)
-                {
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-
-                Console.Write($"  {option}  ");
-                Console.ResetColor();
-            }
-            Console.WriteLine("\n");
-        }
-        */
-
         public void DisplayTasks()
         {
             if (tasks.Count == 0)
             {
-                Console.WriteLine("\nthere are no tasks in your list");
+                Console.WriteLine("\n======> * there are no tasks in your list * <======\n");
                 return;
             }
 
             Console.Clear();
+
+            // check for overdue undone tasks and adjust Workon
+            foreach (var task in tasks)
+            {
+                if (!task.Done && task.Deadline.HasValue && DateTime.Today > task.Deadline.Value)
+                {
+                    task.Workon = DateTime.Today;
+                }
+            }
+
             var groupedTasks = tasks.GroupBy(t => t.Workon.Date).OrderBy(g => g.Key);  // ensure dates are in chronological order
 
-            Console.WriteLine("\nhere is your to-do list:");
+            Console.WriteLine("\n======> * HERE\'S YOUR TO-DO LIST * <======");
             var options = new List<string>();
 
             foreach (var dayGroup in groupedTasks)
@@ -358,7 +260,15 @@ namespace TaskList.Managers
                     Console.ForegroundColor = ConsoleColor.DarkCyan;
                     Console.WriteLine($"*** {task.Name} ***");
                     Console.ResetColor();
-                    Console.WriteLine($"project: {task.Project}, deadline: {task.Deadline:MM-dd}");
+                    if (!task.Done && task.Deadline.HasValue && task.Workon > task.Deadline.Value)
+                    {
+                        Console.Write($"project: {task.Project}");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"    deadline: {task.Deadline:MM-dd}");
+                        Console.ResetColor();
+                    }
+                    else
+                        Console.WriteLine($"project: {task.Project}     deadline: {task.Deadline:MM-dd}");
                     Console.Write(task.Done ? "done!.........." : "working on it..........");
                     Console.WriteLine(task.LoveIt ? "such a great thing to do!\n" : "just one of those things you sorta gotta get outta your way\n");
                     options.Add(task.Name.ToString());
