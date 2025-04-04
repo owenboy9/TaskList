@@ -283,10 +283,9 @@ namespace TaskList.Managers
                     }
                 }
             }
+            Console.WriteLine("\n\n");
             Menu(options.ToArray());
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("\n\n\n==> ******************************** <==");
-            Console.ResetColor();
+
         }
 
         public void Menu(string[] options)
@@ -294,31 +293,46 @@ namespace TaskList.Managers
             int selectedIndex = 0;
             ConsoleKey key;
 
-            Console.CursorVisible = false; // Hide cursor for a clean UI
+            Console.CursorVisible = false; // hide cursor for a clean ui
 
-            // Print the static menu header
+            // calculate fixed line positions
+            int footerLine = Console.WindowHeight - 2;
+            int menuLine = footerLine - 1;
+            int headerLine = menuLine - 1;
+
+            // clear a specific console line
+            void ClearLine(int line)
+            {
+                Console.SetCursorPosition(0, line);
+                Console.Write(new string(' ', Console.WindowWidth));
+            }
+
+            // print header
+            ClearLine(headerLine);
+            Console.SetCursorPosition(0, headerLine);
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("\n==> choose a task to modify or press ESC to skip <==\n");
+            Console.Write("==> choose a task to modify or press esc to skip <==");
             Console.ResetColor();
 
-            // Remember where the menu selection should appear
-            int menuLine = Console.CursorTop;
+            // print footer
+            ClearLine(footerLine);
+            Console.SetCursorPosition(0, footerLine);
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("=========================>*<========================".PadRight(Console.WindowWidth));
+            Console.ResetColor();
 
             do
             {
-                // Move cursor to the menu position
+                // move cursor to the menu line
+                ClearLine(menuLine);
                 Console.SetCursorPosition(0, menuLine);
 
-                // Clear previous text before printing the new selection
-                Console.Write(new string(' ', Console.WindowWidth)); // Overwrite previous option
-                Console.SetCursorPosition(0, menuLine); // Reset cursor to the start of line
-
-                // Print highlighted option
+                // print highlighted option
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write($"=> {options[selectedIndex]} <=");
+                Console.Write($"                    => {options[selectedIndex]} <=");
                 Console.ResetColor();
 
-                // Read user input
+                // read user input
                 key = Console.ReadKey(true).Key;
 
                 if (key == ConsoleKey.UpArrow)
@@ -326,12 +340,13 @@ namespace TaskList.Managers
                 else if (key == ConsoleKey.DownArrow)
                     selectedIndex = (selectedIndex == options.Length - 1) ? 0 : selectedIndex + 1;
                 else if (key == ConsoleKey.Escape)
-                    return; // Exit menu if user presses 'Escape'
+                    return; // exit menu if user presses esc
 
             } while (key != ConsoleKey.Enter);
 
             HandleSelection(options[selectedIndex]);
         }
+
 
 
 
