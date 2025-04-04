@@ -79,6 +79,7 @@ namespace TaskList.Managers
 
         public void DisplayProjects()
         {
+            Console.Clear();
             if (projects.Count == 0)
             {
                 Console.WriteLine("\nyou have no projects going on");

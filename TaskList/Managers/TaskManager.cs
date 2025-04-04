@@ -224,13 +224,13 @@ namespace TaskList.Managers
 
         public void DisplayTasks()
         {
+            Console.Clear();
+
             if (tasks.Count == 0)
             {
                 Console.WriteLine("\n======> * there are no tasks in your list * <======\n");
                 return;
             }
-
-            Console.Clear();
 
             // check for overdue undone tasks and adjust Workon
             foreach (var task in tasks)
@@ -284,6 +284,9 @@ namespace TaskList.Managers
                 }
             }
             Menu(options.ToArray());
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("\n\n\n==> ******************************** <==");
+            Console.ResetColor();
         }
 
         public void Menu(string[] options)
@@ -294,7 +297,9 @@ namespace TaskList.Managers
             Console.CursorVisible = false; // Hide cursor for a clean UI
 
             // Print the static menu header
-            Console.WriteLine("\n==> choose a task to modify or press ESC to skip <==");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("\n==> choose a task to modify or press ESC to skip <==\n");
+            Console.ResetColor();
 
             // Remember where the menu selection should appear
             int menuLine = Console.CursorTop;
