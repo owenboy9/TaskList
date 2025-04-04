@@ -56,9 +56,41 @@ namespace TaskList.Managers
             }
 
             Console.Write("\nwhen do you need to be done with it? ");
-            DateTime deadline = DateTime.Parse(Console.ReadLine());
+            DateTime deadline; // declare variable
+            try
+            {
+                deadline = DateTime.Parse(Console.ReadLine());
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("\ninvalid date format. please try again.");
+                return;
+            }
+
             Console.Write("\nwhen are you planning to work on it? ");
-            DateTime workon = DateTime.Parse(Console.ReadLine());
+            string workonInput = Console.ReadLine();
+            DateTime workon;
+            // default to today's date
+            if (string.IsNullOrWhiteSpace(workonInput))
+            { 
+                workon = DateTime.Today; // default to today if no input
+            }
+            else
+            
+            {
+             // catch incorrect user input
+                try
+                {
+                    workon = DateTime.Parse(workonInput);
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("\ninvalid date format. please try again.");
+                    return;
+                }   
+               
+            }
+
             Console.Write("\ndo you love this task? (y/n) ");
             bool loveIt = Console.ReadLine().ToLower() == "y" ? true : false;
 
