@@ -55,30 +55,18 @@ namespace TaskList.Managers
                 }
             }
 
-            Console.Write("\nwhen do you need to be done with it? ");
-            DateTime deadline; // declare variable
-            try
-            {
-                deadline = DateTime.Parse(Console.ReadLine());
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("\ninvalid date format. please try again.");
-                return;
-            }
-
             Console.Write("\nwhen are you planning to work on it? ");
             string workonInput = Console.ReadLine();
             DateTime workon;
             // default to today's date
             if (string.IsNullOrWhiteSpace(workonInput))
-            { 
+            {
                 workon = DateTime.Today; // default to today if no input
             }
             else
-            
+
             {
-             // catch incorrect user input
+                // catch incorrect user input
                 try
                 {
                     workon = DateTime.Parse(workonInput);
@@ -87,8 +75,30 @@ namespace TaskList.Managers
                 {
                     Console.WriteLine("\ninvalid date format. please try again.");
                     return;
-                }   
-               
+                }
+
+            }
+
+            Console.Write("\nwhen do you need to be done with it? ");
+            DateTime deadline; // declare variable
+            string deadlineInput = Console.ReadLine(); // read user input
+            // default to three days from now
+            if (string.IsNullOrWhiteSpace(deadlineInput))
+            {
+                deadline = DateTime.Today.AddDays(3); // default to three days from now if no input
+            }
+            else
+            {
+
+                try
+                {
+                    deadline = DateTime.Parse(Console.ReadLine());
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("\ninvalid date format. please try again.");
+                    return;
+                }
             }
 
             Console.Write("\ndo you love this task? (y/n) ");
