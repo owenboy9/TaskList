@@ -5,5 +5,6 @@ the current task and project lists are automatically saved to a json file, and r
 
 the task list is displayed by date; if not completed, all overdue tasks are automatically moved to 'today,' and their deadline shows in red.
 tasks can also be displayed sorted by the projects they belong to, and then the user gets a fuller description of each project.
-a self-care feature is also a part of the application: if the number of tasks per day excedes two, a self-care activity from a predefined list
+
+the application includes a self-care feature, too: if the number of tasks per day excedes two, a self-care activity from a predefined list
 is automatically inserted after each two tasks.
