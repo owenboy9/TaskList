@@ -1,13 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Security.Cryptography;
-using System.Xml;
 using TaskList.Models;
 
 namespace TaskList.Managers
@@ -283,7 +274,7 @@ namespace TaskList.Managers
                     }
                 }
             }
-            Console.WriteLine("\n\n");
+            Console.WriteLine("\n\n\n");
             Menu(options.ToArray());
 
         }
