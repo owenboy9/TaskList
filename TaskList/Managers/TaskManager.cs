@@ -51,6 +51,7 @@ namespace TaskList.Managers
                 }
                 else
                 {
+                    Console.WriteLine("sadly, you cannot have a projectless task in your life");
                     return;  // Return if user doesn't want to add the project
                 }
             }
@@ -104,7 +105,7 @@ namespace TaskList.Managers
             Console.Write("\ndo you love this task? (y/n) ");
             bool loveIt = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            ToDo task = new ToDo(name, loveIt, projectName, workon, deadline);
+            ToDo task = new ToDo(name, loveIt, projectName, deadline, workon);
             tasks.Add(task);
             SaveTasks();  // Save tasks to file after adding a new one
             Console.WriteLine("\ntask added successfully!");
