@@ -1,4 +1,4 @@
-a simple this to-do list console application that allows users to create a list of tasks. 
+a simple to-do list console application that allows users to create a list of tasks. 
 all tasks have a title and work-on date, deadline is optional. every task should belong to a project (however, that, too, is optional). 
 the user will use a text-based UI via the command line. they are able to edit and remove tasks. 
 the current task list is automatically saved to a json file, and retrieved from it on restart.
